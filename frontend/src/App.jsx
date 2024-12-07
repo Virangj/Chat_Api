@@ -10,13 +10,13 @@ import { useEffect } from "react";
 import { Loader } from "lucide-react";
 
 const App = () => {
+  
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
   console.log(authUser);
+
 
   if (isCheckingAuth && !authUser) {
     return (
@@ -33,17 +33,17 @@ const App = () => {
       <Routes>
         <Route
           path="/"
-          element={authUser ? <HomePage /> : <Navigate to={LoginPage} />}
+          element={authUser ? <HomePage /> : <Navigate to='/login' />}
         />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/settings"
-          element={authUser ? <SettingsPage /> : <Navigate to={LoginPage} />}
+          element={authUser ? <SettingsPage /> : <Navigate to='/login' />}
         />
         <Route
           path="/profile"
-          element={authUser ? <ProfilePage /> : <Navigate to={LoginPage} />}
+          element={authUser ? <ProfilePage /> : <Navigate to='/login' />}
         />
       </Routes>
     </div>
