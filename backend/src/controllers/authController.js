@@ -1,9 +1,10 @@
 import { generateToken } from "../lib/util.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req, res) => {
-  const { fullname, email, password } = req.body;
+  const { fullName, email, password } = req.body;
   try {
     if (password.length < 6) {
       return res
@@ -22,7 +23,7 @@ export const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      fullname,
+      fullName,
       email,
       password: hashedPassword,
     });
@@ -33,7 +34,7 @@ export const signup = async (req, res) => {
 
       res.status(201).json({
         _id: newUser._id,
-        fullname: newUser.fullname,
+        fullname: newUser.fullName,
         email: newUser.email,
         profilePic: newUser.profilePic,
       });
@@ -61,7 +62,7 @@ export const login = async (req, res) => {
 
     res.status(200).json({
       _id: user._id,
-      fullname: user.fullname,
+      fullname: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
     });
@@ -83,29 +84,32 @@ export const logout = (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { profilePic } = req.body;
-    const userId = req.user._id
+    const userId = req.user._id;
 
-    if(!profilePic){
-      return res.status(404).json({message: "ProfilePic is required"});
+    if (!profilePic) {
+      return res.status(404).json({ message: "ProfilePic is required" });
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilePic)
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
 
-    const updatedUser = await User.findByIdAndUpdate(userId, {profilePic:uploadResponse.secure_url}, {new: true})
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    );
 
-    res.status(200).json(updatedUser)
-
+    res.status(200).json(updatedUser);
   } catch (error) {
-    console.log("update profilePic error" , error.message)
-    res.status(500).json({message: "Internal Error"})
+    console.log("update profilePic error", error.message);
+    res.status(500).json({ message: "Internal Error" });
   }
-}
+};
 
-export const checkAuth =  (req, res) => {
+export const checkAuth = (req, res) => {
   try {
-    res.status(200).json(req.user)
+    res.status(200).json(req.user);
   } catch (error) {
-    console.log("Error in check controller", error.message)
-    res.status(500).json({message: "Internal server error"})
+    console.log("Error in check controller", error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
-}
+};
